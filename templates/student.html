@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>学生请假系统</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>请假申请</h1>
+    <form method="post">
+        <label>请假时间: <input type="date" name="start_date" required></label>
+        <label>至<input type="date" name="end_date" required></label>
+        <textarea name="reason" placeholder="请假理由" required></textarea>
+        <button type="submit">提交申请</button>
+    </form>
+
+    <h2>历史记录</h2>
+    <table>
+        <tr>
+            <th>日期</th>
+            <th>理由</th>
+            <th>AI审核</th>
+            <th>状态</th>
+            <th>下载</th>
+        </tr>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req.start_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ req.reason }}</td>
+            <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">
+                {{ req.ai_check }}
+            </td>
+            <td>{{ req.status }}</td>
+            <td>
+                <a href="/download/{{ req.id }}">下载假条</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

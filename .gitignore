@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+
+# Database
+*.db
+*.sqlite3
+
+# Environment
+.env
+.env.prod
+
+# Generated files
+/generated_docs/
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Docker
+docker-compose.yml
