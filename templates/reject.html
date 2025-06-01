@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>拒绝请假申请</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>拒绝请假申请</h1>
+    <form method="post">
+        <p>学生ID: {{ request.student_id }}</p>
+        <p>请假时间: {{ request.start_date.strftime('%Y-%m-%d') }}至{{ request.end_date.strftime('%Y-%m-%d') }}</p>
+        <p>请假理由: {{ request.reason }}</p>
+        <textarea name="comment" placeholder="拒绝原因(必填)"></textarea>
+        <button type="submit" class="reject-btn">确认拒绝</button>
+    </form>
+</body>
+</html>

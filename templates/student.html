@@ -6,10 +6,11 @@
 </head>
 <body>
     <h1>请假申请</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <label>请假时间: <input type="date" name="start_date" required></label>
         <label>至<input type="date" name="end_date" required></label>
         <textarea name="reason" placeholder="请假理由" required></textarea>
+        <input type="file" name="attachment">
         <button type="submit">提交申请</button>
     </form>
 
@@ -20,7 +21,7 @@
             <th>理由</th>
             <th>AI审核</th>
             <th>状态</th>
-            <th>下载</th>
+            <th>操作</th>
         </tr>
         {% for req in requests %}
         <tr>
@@ -31,9 +32,20 @@
             </td>
             <td>{{ req.status }}</td>
             <td>
-                <a href="/download/{{ req.id }}">下载假条</a>
+                {% if req.status == 'approved' %}
+                    <a href="/download/{{ req.id }}">下载假条</a>
+                {% else %}
+                    <span class="disabled-link">待审批</span>
+                {% endif %}
             </td>
         </tr>
+        {% if req.teacher_comment %}
+        <tr>
+            <td colspan="5" class="comment">
+                教师意见: {{ req.teacher_comment }}
+            </td>
+        </tr>
+        {% endif %}
         {% endfor %}
     </table>
 </body>

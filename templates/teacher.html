@@ -27,6 +27,11 @@
                 {% if req.teacher_comment %}
                 <div class="comment">教师意见: {{ req.teacher_comment }}</div>
                 {% endif %}
+                {% if req.attachment_path %}
+                    <div class="attachment">
+                        <a href="/download_attachment/{{ req.id }}">查看附件</a>
+                    </div>
+                {% endif %}
                 <a href="/approve/{{ req.id }}" class="approve-btn">批准</a>
                 <a href="/reject/{{ req.id }}" class="reject-btn">拒绝</a>
             </td>

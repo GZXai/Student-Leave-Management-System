@@ -92,3 +92,9 @@ th {
     font-size: 0.9em;
     color: #555;
 }
+
+.disabled-link {
+    color: #999;
+    cursor: not-allowed;
+    text-decoration: none;
+}

@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, s
 from flask_sqlalchemy import SQLAlchemy
 from utils.ai_check import check_reason_validity
 from utils.doc_gen import generate_leave_doc
-import datetime
+from flask import abort
+from datetime import datetime  # 修改这行导入语句
 import os
 from dotenv import load_dotenv
 
@@ -30,7 +31,8 @@ class LeaveRequest(db.Model):
     end_date = db.Column(db.DateTime)
     status = db.Column(db.String(20), default='pending')
     ai_check = db.Column(db.String(20))
-    teacher_comment = db.Column(db.String(500))  # 新增教师评论字段
+    teacher_comment = db.Column(db.String(500))
+    attachment_path = db.Column(db.String(500))  # 新增附件路径字段
 
 
 @app.route('/')
@@ -63,13 +65,25 @@ def dashboard():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
+        # 处理文件上传
+        file = request.files.get('attachment')
+        file_path = None
+        if file and file.filename:
+            upload_folder = os.path.join(app.root_path, 'uploads')
+            if not os.path.exists(upload_folder):
+                os.makedirs(upload_folder)
+            filename = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{file.filename}"
+            file_path = os.path.join('uploads', filename)
+            file.save(os.path.join(app.root_path, file_path))
+
         is_valid = check_reason_validity(request.form['reason'])
         new_request = LeaveRequest(
             student_id=session['user_id'],
             reason=request.form['reason'],
-            start_date=datetime.datetime.strptime(request.form['start_date'], '%Y-%m-%d'),
-            end_date=datetime.datetime.strptime(request.form['end_date'], '%Y-%m-%d'),
-            ai_check='valid' if is_valid else 'invalid'
+            start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%d'),  # 移除多余的datetime
+            end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%d'),      # 移除多余的datetime
+            ai_check='valid' if is_valid else 'invalid',
+            attachment_path=file_path  # 保存附件路径
         )
         db.session.add(new_request)
         db.session.commit()
@@ -111,8 +125,18 @@ def reject(req_id):
 @app.route('/download/<int:req_id>')
 def download(req_id):
     req = LeaveRequest.query.get(req_id)
+    if req.status != 'approved':
+        abort(403, "请假申请尚未批准，无法下载假条")
     doc_path = generate_leave_doc(req)
     return send_file(doc_path, as_attachment=True)
+
+
+@app.route('/download_attachment/<int:req_id>')
+def download_attachment(req_id):
+    req = LeaveRequest.query.get(req_id)
+    if req.attachment_path:
+        return send_file(os.path.join(app.root_path, req.attachment_path), as_attachment=True)
+    abort(404)
 
 
 if __name__ == '__main__':
