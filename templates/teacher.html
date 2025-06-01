@@ -3,46 +3,52 @@
 <head>
     <title>教师审批</title>
     <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>待审批请假申请</h1>
-    <a href="/logout" class="logout-btn">退出登录</a>
-    <table>
-        <tr>
-            <th>学生ID</th>
-            <th>请假时间</th>
-            <th>请假理由</th>
-            <th>AI审核</th>
-            <th>操作</th>
-        </tr>
-        {% for req in requests %}
-        <tr>
-            <td>{{ req.student_id }}</td>
-            <td>{{ req.start_date.strftime('%Y-%m-%d') }}至{{ req.end_date.strftime('%Y-%m-%d') }}</td>
-            <td class="reason-cell">{{ req.reason }}</td>
-            <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">
-                {{ req.ai_check|upper }}
-                <div class="ai-details" style="margin-top:5px;font-size:0.9em">
-                    {% set details = req.ai_details|fromjson %}
-                    评分: {{ details.score }}/20<br>
-                    意见: {{ details.reason }}<br>
-                    建议: {{ details.suggestion }}
-                </div>
-            </td>
-            <td>
-                {% if req.teacher_comment %}
-                <div class="comment">教师意见: {{ req.teacher_comment }}</div>
-                {% endif %}
-                {% if req.attachment_path %}
-                    <div class="attachment">
-                        <a href="/download_attachment/{{ req.id }}">查看附件</a>
-                    </div>
-                {% endif %}
-                <a href="/approve/{{ req.id }}" class="approve-btn">批准</a>
-                <a href="/reject/{{ req.id }}" class="reject-btn">拒绝</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <h1>待审批请假申请</h1>
+        <a href="/logout" class="logout-btn">退出登录</a>
+        
+        <div class="table-responsive">
+            <table>
+                <tr>
+                    <th>学生ID</th>
+                    <th>请假时间</th>
+                    <th>请假理由</th>
+                    <th>AI审核</th>
+                    <th>操作</th>
+                </tr>
+                {% for req in requests %}
+                <tr>
+                    <td>{{ req.student_id }}</td>
+                    <td>{{ req.start_date.strftime('%Y-%m-%d') }}至{{ req.end_date.strftime('%Y-%m-%d') }}</td>
+                    <td class="reason-cell">{{ req.reason }}</td>
+                    <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">
+                        {{ req.ai_check|upper }}
+                        <div class="ai-details" style="margin-top:5px;font-size:0.9em">
+                            {% set details = req.ai_details|fromjson %}
+                            评分: {{ details.score }}/20<br>
+                            意见: {{ details.reason }}<br>
+                            建议: {{ details.suggestion }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if req.teacher_comment %}
+                        <div class="comment">教师意见: {{ req.teacher_comment }}</div>
+                        {% endif %}
+                        {% if req.attachment_path %}
+                            <div class="attachment">
+                                <a href="/download_attachment/{{ req.id }}">查看附件</a>
+                            </div>
+                        {% endif %}
+                        <a href="/approve/{{ req.id }}" class="approve-btn">批准</a>
+                        <a href="/reject/{{ req.id }}" class="reject-btn">拒绝</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </body>
 </html>
