@@ -3,7 +3,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background-color: #f5f5f5;
+    background: linear-gradient(150deg, #f8f9fa 0%, #e9ecef 100%);
     margin: 0;
     padding: 20px;
 }
@@ -13,7 +13,7 @@ body {
     max-width: 500px;
     margin: 30px auto;
     padding: 25px;
-    background: white;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa); /* 容器添加轻微渐变 */
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     transition: transform 0.3s, box-shadow 0.3s;
@@ -27,8 +27,8 @@ body {
 /* 标题样式 */
 h1, h2 {
     color: #2c3e50;
-    margin-bottom: 20px;
-    text-align: center;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px; /* 标题添加字间距 */
 }
 
 /* 表格样式 */
@@ -47,7 +47,7 @@ th, td {
 }
 
 th {
-    background-color: #3498db;
+    background: linear-gradient(135deg, #3498db, #2980b9); /* 表头渐变 */
     color: white;
 }
 
@@ -62,27 +62,20 @@ button, .approve-btn, .reject-btn, .logout-btn {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.3s;
-}
-
-.approve-btn, .reject-btn {
-    display: inline-block;
-    white-space: nowrap;
-    margin: 5px;
-    padding: 8px 12px;
-    min-width: 60px;
-    text-align: center;
-}
-
-.logout-btn {
-    background: linear-gradient(135deg, #34495e, #2c3e50);
-    color: white;
-    float: right;
+    transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1); /* 更自然的过渡函数 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 默认阴影 */
 }
 
 button:hover, .approve-btn:hover, .reject-btn:hover, .logout-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
+    opacity: 0.95;
+    transform: translateY(-1px); /* 减少位移量更符合移动端 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* 悬停阴影加重 */
+}
+
+/* 容器悬停 */
+.login-container:hover, .form-container:hover {
+    transform: translateY(-3px); /* 调整位移量更协调 */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
 /* 表单元素 */
@@ -93,6 +86,19 @@ input, textarea, select {
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
+    transition: border-color 0.2s; /* 添加边框颜色过渡 */
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #3498db; /* 聚焦时突出主题色 */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1); /* 添加聚焦光晕 */
+}
+
+/* 历史记录容器 */
+.history-container {
+    margin-top: 30px;
+    padding: 25px; /* 增加内边距更宽敞 */
 }
 
 textarea {
@@ -166,7 +172,13 @@ table td:nth-child(6) {
 
 /* 历史记录表格样式 */
 .history-container {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(52, 152, 219, 0.1);
     margin-top: 40px;
+}
+
+table {
+    margin: 20px 0;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -195,18 +207,21 @@ table tr:nth-child(even) {
 }
 
 .status-approved {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: #e8f6ef;
+    color: #16a085;
+    box-shadow: 0 2px 4px rgba(22, 160, 133, 0.1);
 }
 
 .status-pending {
-    background-color: #fff8e1;
-    color: #ff8f00;
+    background-color: #fef5e7;
+    color: #f39c12;
+    box-shadow: 0 2px 4px rgba(243, 156, 18, 0.1);
 }
 
 .status-rejected {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: #fdedec;
+    color: #e74c3c;
+    box-shadow: 0 2px 4px rgba(231, 76, 60, 0.1);
 }
 
 /* 操作按钮组 */
@@ -214,4 +229,44 @@ table tr:nth-child(even) {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+.primary-btn {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+.approve-btn {
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+}
+
+.reject-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+button:not(.approve-btn):not(.reject-btn):not(.logout-btn) {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+}
+
+button::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    vertical-align: text-bottom;
+}
+
+.primary-btn::before {
+    background: url('data:image/svg+xml;utf8,<svg ... ></svg>'); /* 添加图标 */
+}
+
+.approve-btn::before {
+    background: url('data:image/svg+xml;utf8,<svg ... ></svg>');
+}
+
+.reject-btn::before {
+    background: url('data:image/svg+xml;utf8,<svg ... ></svg>');
 }
