@@ -4,13 +4,21 @@ from flask_sqlalchemy import SQLAlchemy
 from utils.ai_check import check_reason_validity
 from utils.doc_gen import generate_leave_doc
 from flask import abort
-from datetime import datetime  # 修改这行导入语句
+from datetime import datetime
 import os
+import json  # 新增导入
 from dotenv import load_dotenv
+
+
+# 添加自定义过滤器
+def fromjson_filter(value):
+    return json.loads(value)
+
 
 load_dotenv()  # 加载.env文件中的环境变量
 
 app = Flask(__name__)
+app.jinja_env.filters['fromjson'] = fromjson_filter
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///leave.db')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 从环境变量获取密钥
 db = SQLAlchemy(app)
@@ -33,6 +41,7 @@ class LeaveRequest(db.Model):
     ai_check = db.Column(db.String(20))
     teacher_comment = db.Column(db.String(500))
     attachment_path = db.Column(db.String(500))  # 新增附件路径字段
+    ai_details = db.Column(db.Text)  # 新增字段存储AI审核详情
 
 
 @app.route('/')
@@ -76,14 +85,15 @@ def dashboard():
             file_path = os.path.join('uploads', filename)
             file.save(os.path.join(app.root_path, file_path))
 
-        is_valid = check_reason_validity(request.form['reason'])
+        ai_result = check_reason_validity(request.form['reason'])
         new_request = LeaveRequest(
             student_id=session['user_id'],
             reason=request.form['reason'],
-            start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%d'),  # 移除多余的datetime
-            end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%d'),      # 移除多余的datetime
-            ai_check='valid' if is_valid else 'invalid',
-            attachment_path=file_path  # 保存附件路径
+            start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%d'),
+            end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%d'),
+            ai_check='valid' if ai_result['is_valid'] else 'invalid',
+            ai_details=json.dumps(ai_result['details']),  # 新增字段存储详细结果
+            attachment_path=file_path
         )
         db.session.add(new_request)
         db.session.commit()

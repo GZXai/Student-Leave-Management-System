@@ -22,6 +22,12 @@
             <td class="reason-cell">{{ req.reason }}</td>
             <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">
                 {{ req.ai_check|upper }}
+                <div class="ai-details" style="margin-top:5px;font-size:0.9em">
+                    {% set details = req.ai_details|fromjson %}
+                    评分: {{ details.score }}/20<br>
+                    意见: {{ details.reason }}<br>
+                    建议: {{ details.suggestion }}
+                </div>
             </td>
             <td>
                 {% if req.teacher_comment %}
