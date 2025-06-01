@@ -56,15 +56,22 @@ flask shell
 flask run
 
 
-项目结构
-├── app.py                # 主应用文件
-├── static/               # 静态资源
-│   └── style.css         # 样式表
-├── templates/            # 模板文件
-│   ├── login.html        # 登录页面
-│   ├── student.html      # 学生界面
-│   ├── teacher.html      # 教师界面
-│   └── teacher_stats.html # 统计页面
-└── utils/                # 工具模块
-    ├── ai_check.py       # AI审核模块
-    └── doc_gen.py        # 文档生成模块
+学生请假管理系统/
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── app.py (主应用文件)
+├── requirements.txt (依赖文件)
+├── static/
+│   └── style.css (前端样式文件)
+├── templates/
+│   ├── approve.html (审批页面)
+│   ├── login.html (登录页面)
+│   ├── reject.html (拒绝页面)
+│   ├── student.html (学生页面)
+│   ├── teacher.html (教师页面)
+│   └── teacher_stats.html (统计页面)
+└── utils/
+    ├── ai_check.py (AI审核模块)
+    └──  doc_gen.py (文档生成模块)
+  
