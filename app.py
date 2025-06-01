@@ -157,6 +157,36 @@ def download_attachment(req_id):
     abort(404)
 
 
+@app.route('/teacher_stats')
+def teacher_stats():
+    if 'role' not in session or session['role'] != 'teacher':
+        return redirect(url_for('login'))
+    
+    # 获取各种状态的请假数量
+    pending_count = LeaveRequest.query.filter_by(status='pending').count()
+    approved_count = LeaveRequest.query.filter_by(status='approved').count()
+    rejected_count = LeaveRequest.query.filter_by(status='rejected').count()
+    
+    # 获取按请假类型统计的数据
+    type_stats = db.session.query(
+        LeaveRequest.leave_type,
+        db.func.count(LeaveRequest.id)
+    ).group_by(LeaveRequest.leave_type).all()
+    
+    # 获取按学生统计的数据
+    student_stats = db.session.query(
+        LeaveRequest.student_id,
+        db.func.count(LeaveRequest.id)
+    ).group_by(LeaveRequest.student_id).all()
+    
+    return render_template('teacher_stats.html', 
+                         pending_count=pending_count,
+                         approved_count=approved_count,
+                         rejected_count=rejected_count,
+                         type_stats=type_stats,
+                         student_stats=student_stats)
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
@@ -165,7 +195,7 @@ if __name__ == '__main__':
             teacher = User(
                 username="teacher@test.com",
                 password="654321",
-                role="teacher"  # 修复缺少的逗号和闭合括号
+                role="teacher"
             )
             db.session.add(teacher)
         if not User.query.filter_by(username="student@test.com").first():
@@ -175,5 +205,13 @@ if __name__ == '__main__':
                 role="student"
             )
             db.session.add(student)
+        # 添加新学生账户
+        if not User.query.filter_by(username="student2@test.com").first():
+            student2 = User(
+                username="student2@test.com",
+                password="123456",
+                role="student"
+            )
+            db.session.add(student2)
         db.session.commit()
     app.run(host='0.0.0.0', port=5000)
