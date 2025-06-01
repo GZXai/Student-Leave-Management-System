@@ -4,10 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from utils.ai_check import check_reason_validity
 from utils.doc_gen import generate_leave_doc
 import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # 加载.env文件中的环境变量
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///leave.db'
-app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///leave.db')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 从环境变量获取密钥
 db = SQLAlchemy(app)
 
 
@@ -26,6 +30,7 @@ class LeaveRequest(db.Model):
     end_date = db.Column(db.DateTime)
     status = db.Column(db.String(20), default='pending')
     ai_check = db.Column(db.String(20))
+    teacher_comment = db.Column(db.String(500))  # 新增教师评论字段
 
 
 @app.route('/')
@@ -82,20 +87,25 @@ def teacher_view():
     return render_template('teacher.html', requests=requests)
 
 
-@app.route('/approve/<int:req_id>')
+@app.route('/approve/<int:req_id>', methods=['GET', 'POST'])
 def approve(req_id):
     req = LeaveRequest.query.get(req_id)
-    req.status = 'approved'
-    db.session.commit()
-    return redirect(url_for('teacher_view'))
+    if request.method == 'POST':
+        req.status = 'approved'
+        req.teacher_comment = request.form.get('comment', '')
+        db.session.commit()
+        return redirect(url_for('teacher_view'))
+    return render_template('approve.html', request=req)
 
-
-@app.route('/reject/<int:req_id>')
+@app.route('/reject/<int:req_id>', methods=['GET', 'POST'])
 def reject(req_id):
     req = LeaveRequest.query.get(req_id)
-    req.status = 'rejected'
-    db.session.commit()
-    return redirect(url_for('teacher_view'))
+    if request.method == 'POST':
+        req.status = 'rejected'
+        req.teacher_comment = request.form.get('comment', '')
+        db.session.commit()
+        return redirect(url_for('teacher_view'))
+    return render_template('reject.html', request=req)
 
 
 @app.route('/download/<int:req_id>')

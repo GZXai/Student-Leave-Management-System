@@ -83,3 +83,12 @@ th {
     color: red;
     margin-top: 10px;
 }
+
+.comment {
+    background-color: #f8f9fa;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #555;
+}
