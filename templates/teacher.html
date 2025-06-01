@@ -52,8 +52,11 @@
                                 <a href="/download_attachment/{{ req.id }}">查看附件</a>
                             </div>
                         {% endif %}
-                        <a href="/approve/{{ req.id }}" class="approve-btn">批准</a>
-                        <a href="/reject/{{ req.id }}" class="reject-btn">拒绝</a>
+                        <form method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <a href="/approve/{{ req.id }}" class="approve-btn">批准</a>
+                            <a href="/reject/{{ req.id }}" class="reject-btn">拒绝</a>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

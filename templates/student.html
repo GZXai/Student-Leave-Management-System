@@ -9,6 +9,7 @@
     <div class="form-container">
         <h1>请假申请</h1>
         <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>请假时间: 
                     <input type="date" name="start_date" required>

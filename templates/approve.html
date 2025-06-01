@@ -7,6 +7,7 @@
 <body>
     <h1>审批请假申请</h1>
     <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <p>学生ID: {{ request.student_id }}</p>
         <p>请假时间: {{ request.start_date.strftime('%Y-%m-%d') }}至{{ request.end_date.strftime('%Y-%m-%d') }}</p>
         <p>请假理由: {{ request.reason }}</p>

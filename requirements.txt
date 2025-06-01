@@ -1,8 +1,12 @@
 Flask==3.0.2
 Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3  # 新增
+Flask-Migrate==4.0.7  # 新增
 requests==2.31.0
 python-docx==0.8.11
 python-dotenv==1.0.0
+python-dateutil==2.9.0  # 新增
 gunicorn==21.2.0
 alembic==1.13.1
 Werkzeug==3.0.2  # 明确添加安全依赖
+Flask-WTF==1.2.1  # 明确添加安全依赖

@@ -8,6 +8,9 @@ from datetime import datetime
 import os
 import json  # 新增导入
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf.csrf import CSRFProtect
+import time  # 新增导入
 
 
 # 添加自定义过滤器
@@ -18,6 +21,7 @@ def fromjson_filter(value):
 load_dotenv()  # 加载.env文件中的环境变量
 
 app = Flask(__name__)
+csrf = CSRFProtect(app)  # 将CSRF初始化移到正确位置
 app.jinja_env.filters['fromjson'] = fromjson_filter
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///leave.db')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # 从环境变量获取密钥
@@ -27,8 +31,14 @@ db = SQLAlchemy(app)
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(120))
+    password_hash = db.Column(db.String(256))  # 替换原来的password字段
     role = db.Column(db.String(20))
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+        
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class LeaveRequest(db.Model):
@@ -54,12 +64,12 @@ def home():
 def login():
     if request.method == 'POST':
         user = User.query.filter_by(username=request.form['username']).first()
-        if user and user.password == request.form['password']:
+        if user and user.check_password(request.form['password']):  # 使用哈希验证
             session['user_id'] = user.id
             session['role'] = user.role
-            # 根据角色重定向到不同页面
             return redirect(url_for('teacher_view' if user.role == 'teacher' else 'dashboard'))
         flash('用户名或密码错误')
+        time.sleep(2)  # 增加延迟防止暴力破解
     return render_template('login.html')
 
 
@@ -190,28 +200,26 @@ def teacher_stats():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # 初始化测试账号
         if not User.query.filter_by(username="teacher@test.com").first():
             teacher = User(
                 username="teacher@test.com",
-                password="654321",
                 role="teacher"
             )
+            teacher.set_password("654321")
             db.session.add(teacher)
         if not User.query.filter_by(username="student@test.com").first():
             student = User(
                 username="student@test.com",
-                password="123456",
                 role="student"
             )
+            student.set_password("123456")  # 修正为使用哈希密码
             db.session.add(student)
-        # 添加新学生账户
         if not User.query.filter_by(username="student2@test.com").first():
             student2 = User(
                 username="student2@test.com",
-                password="123456",
                 role="student"
             )
+            student2.set_password("123456")  # 修正为使用哈希密码
             db.session.add(student2)
         db.session.commit()
     app.run(host='0.0.0.0', port=5000)
