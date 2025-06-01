@@ -14,6 +14,7 @@
             <table>
                 <tr>
                     <th>学生ID</th>
+                    <th>请假类型</th>
                     <th>请假时间</th>
                     <th>请假理由</th>
                     <th>AI审核</th>
@@ -22,6 +23,12 @@
                 {% for req in requests %}
                 <tr>
                     <td>{{ req.student_id }}</td>
+                    <td>
+                        {% if req.leave_type == 'sick' %}病假
+                        {% elif req.leave_type == 'personal' %}事假
+                        {% elif req.leave_type == 'official' %}公假
+                        {% endif %}
+                    </td>
                     <td>{{ req.start_date.strftime('%Y-%m-%d') }}至{{ req.end_date.strftime('%Y-%m-%d') }}</td>
                     <td class="reason-cell">{{ req.reason }}</td>
                     <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">

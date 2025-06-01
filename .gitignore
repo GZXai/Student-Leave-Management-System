@@ -23,3 +23,7 @@ venv/
 
 # Docker
 docker-compose.yml
+
+# Uploads
+/uploads/
+

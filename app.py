@@ -35,6 +35,7 @@ class LeaveRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer)
     reason = db.Column(db.String(500))
+    leave_type = db.Column(db.String(20))  # 新增请假类型字段
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
     status = db.Column(db.String(20), default='pending')
@@ -74,7 +75,6 @@ def dashboard():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        # 处理文件上传
         file = request.files.get('attachment')
         file_path = None
         if file and file.filename:
@@ -89,10 +89,11 @@ def dashboard():
         new_request = LeaveRequest(
             student_id=session['user_id'],
             reason=request.form['reason'],
+            leave_type=request.form['leave_type'],  # 新增请假类型
             start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%d'),
             end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%d'),
             ai_check='valid' if ai_result['is_valid'] else 'invalid',
-            ai_details=json.dumps(ai_result['details']),  # 新增字段存储详细结果
+            ai_details=json.dumps(ai_result['details']),
             attachment_path=file_path
         )
         db.session.add(new_request)
