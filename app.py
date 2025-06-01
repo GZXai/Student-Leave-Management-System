@@ -78,6 +78,13 @@ def dashboard():
         file = request.files.get('attachment')
         file_path = None
         if file and file.filename:
+            # 检查文件类型
+            allowed_extensions = {'pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'}
+            file_ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+            if file_ext not in allowed_extensions:
+                flash('只允许上传PDF、Word文档或图片文件')
+                return redirect(url_for('dashboard'))
+                
             upload_folder = os.path.join(app.root_path, 'uploads')
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
