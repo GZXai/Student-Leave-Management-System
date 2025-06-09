@@ -116,8 +116,9 @@ def dashboard():
         db.session.add(new_request)
         db.session.commit()
 
+    current_user = User.query.get(session['user_id'])
     requests = LeaveRequest.query.filter_by(student_id=session['user_id']).all()
-    return render_template('student.html', requests=requests)
+    return render_template('student.html', requests=requests, student_name=current_user.username)
 
 
 @app.route('/teacher')
