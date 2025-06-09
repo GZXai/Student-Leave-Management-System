@@ -14,6 +14,10 @@
                 <span class="button-spacer"></span>
                 <a href="/teacher_stats" class="primary-btn">查看统计</a>
             </div>
+            <form method="get" class="search-form">
+                <input type="text" name="search_name" placeholder="输入学生姓名搜索" value="{{ request.args.get('search_name', '') }}">
+                <button type="submit" class="search-btn">搜索</button>
+            </form>
         </div>
         
         <div class="table-responsive">

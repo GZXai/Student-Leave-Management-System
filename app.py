@@ -118,7 +118,7 @@ def dashboard():
 
     current_user = User.query.get(session['user_id'])
     requests = LeaveRequest.query.filter_by(student_id=session['user_id']).all()
-    return render_template('student.html', requests=requests, student_name=current_user.username)
+    return render_template('student.html', requests=requests, student_id=current_user.id)
 
 
 @app.route('/teacher')
@@ -126,7 +126,14 @@ def teacher_view():
     if 'role' not in session or session['role'] != 'teacher':
         return redirect(url_for('login'))
 
-    requests = LeaveRequest.query.filter_by(status='pending').all()
+    search_name = request.args.get('search_name')
+    if search_name:
+        # 这里需要根据学生姓名查询，但当前模型只有student_id
+        # 需要先建立学生姓名与ID的映射关系
+        requests = LeaveRequest.query.filter_by(student_id=search_name).all()
+    else:
+        requests = LeaveRequest.query.filter_by(status='pending').all()
+    
     return render_template('teacher.html', requests=requests)
 
 
