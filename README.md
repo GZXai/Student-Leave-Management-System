@@ -27,3 +27,51 @@
 ```bash
 git clone https://github.com/GZXai/Student-Leave-Management-System
 cd Student-Leave-Management-System
+
+2.创建并激活虚拟环境 (Windows)
+```bash
+python -m venv venv
+venv\Scripts\activate
+
+3.安装依赖
+```bash
+pip install -r requirements.txt
+
+4.配置环境变量
+创建 .env 文件并配置：
+```bash
+DATABASE_URI=sqlite:///leave.db
+SECRET_KEY=your_secret_key_here
+DEEPSEEK_API_KEY=your_api_key_here
+
+5.初始化数据库
+```bash
+flask shell
+>>> from app import db
+>>> db.create_all()
+>>> exit()
+
+6.运行应用
+```bash
+flask run
+
+
+学生请假管理系统/
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── app.py (主应用文件)
+├── requirements.txt (依赖文件)
+├── static/
+│   └── style.css (前端样式文件)
+├── templates/
+│   ├── approve.html (审批页面)
+│   ├── login.html (登录页面)
+│   ├── reject.html (拒绝页面)
+│   ├── student.html (学生页面)
+│   ├── teacher.html (教师页面)
+│   └── teacher_stats.html (统计页面)
+└── utils/
+    ├── ai_check.py (AI审核模块)
+    └──  doc_gen.py (文档生成模块)
+  
