@@ -8,6 +8,9 @@
 <body>
     <div class="form-container">
         <h1>请假申请</h1>
+        <div class="action-buttons">
+            <a href="/logout" class="logout-btn">退出登录</a>
+        </div>
         <form method="post" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
