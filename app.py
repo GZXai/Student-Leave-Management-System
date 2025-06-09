@@ -45,9 +45,9 @@ class LeaveRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer)
     reason = db.Column(db.String(500))
-    leave_type = db.Column(db.String(20))  # 新增请假类型字段
-    start_date = db.Column(db.DateTime)
-    end_date = db.Column(db.DateTime)
+    leave_type = db.Column(db.String(20))
+    start_date = db.Column(db.DateTime)  # 已经是DateTime类型，无需修改
+    end_date = db.Column(db.DateTime)    # 已经是DateTime类型，无需修改
     status = db.Column(db.String(20), default='pending')
     ai_check = db.Column(db.String(20))
     teacher_comment = db.Column(db.String(500))
@@ -106,9 +106,9 @@ def dashboard():
         new_request = LeaveRequest(
             student_id=session['user_id'],
             reason=request.form['reason'],
-            leave_type=request.form['leave_type'],  # 新增请假类型
-            start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%d'),
-            end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%d'),
+            leave_type=request.form['leave_type'],
+            start_date=datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M'),  # 修改为支持日期时间格式
+            end_date=datetime.strptime(request.form['end_date'], '%Y-%m-%dT%H:%M'),      # 修改为支持日期时间格式
             ai_check='valid' if ai_result['is_valid'] else 'invalid',
             ai_details=json.dumps(ai_result['details']),
             attachment_path=file_path

@@ -21,10 +21,10 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label>请假时间: 
-                    <input type="date" name="start_date" required>
+                    <input type="datetime-local" name="start_date" required>
                 </label>
                 <label>至
-                    <input type="date" name="end_date" required>
+                    <input type="datetime-local" name="end_date" required>
                 </label>
             </div>
             <div class="form-group">

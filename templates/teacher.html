@@ -39,7 +39,7 @@
                         {% elif req.leave_type == 'official' %}公假
                         {% endif %}
                     </td>
-                    <td>{{ req.start_date.strftime('%Y-%m-%d') }}至{{ req.end_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ req.start_date.strftime('%Y-%m-%d %H:%M') }}至{{ req.end_date.strftime('%Y-%m-%d') }}</td>
                     <td class="reason-cell">{{ req.reason }}</td>
                     <td class="{{ 'ai-valid' if req.ai_check == 'valid' else 'ai-invalid' }}">
                         {{ req.ai_check|upper }}
